@@ -1,0 +1,3 @@
+([('智能文件整理工具',
+   '/Users/fanmingxiao/个人文档/Antigravity/文件整理工具/dist/智能文件整理工具',
+   'EXECUTABLE')],)

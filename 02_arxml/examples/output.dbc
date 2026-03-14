@@ -1,0 +1,32 @@
+VERSION ""
+
+NS_ :
+
+BS_:
+
+BU_: SpeedController EngineMonitor DiagnosticHandler
+
+BO_ 256 IF_VehicleSpeed: 8 Vector__XXX
+ SG_ CurrentSpeed : 0|8@1+ (1.0,0.0) [0.0|255.0] "" Vector__XXX
+
+BO_ 257 IF_EngineTemperature: 8 Vector__XXX
+ SG_ EngineTemp : 0|8@1+ (1.0,0.0) [0.0|255.0] "" Vector__XXX
+
+BO_ 258 IF_DiagnosticService_ReadDTC: 8 Vector__XXX
+ SG_ dtcId : 0|16@1+ (1.0,0.0) [0.0|65535.0] "" Vector__XXX
+ SG_ dtcStatus : 16|16@1- (1.0,0.0) [0.0|65535.0] "" Vector__XXX
+
+BO_ 259 IF_DiagnosticService_ClearDTC: 8 Vector__XXX
+ SG_ dtcId : 0|16@1+ (1.0,0.0) [0.0|65535.0] "" Vector__XXX
+
+CM_ BO_ 256 "用于传输车辆速度信息的发送接收接口";
+CM_ BO_ 257 "发动机温度接口";
+CM_ BU_ SpeedController "负责车辆速度控制的应用软件组件";
+CM_ BU_ EngineMonitor "监控发动机状态的应用软件组件";
+CM_ BU_ DiagnosticHandler "诊断处理器";
+
+BA_DEF_ BO_ "GenMsgCycleTime" INT 0 10000;
+BA_DEF_ SG_ "GenSigStartValue" INT 0 65535;
+
+BA_DEF_DEF_ "GenMsgCycleTime" 100;
+BA_DEF_DEF_ "GenSigStartValue" 0;

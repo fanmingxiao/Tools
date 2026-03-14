@@ -1,0 +1,3 @@
+([('ARXML阅读器',
+   '/Users/fanmingxiao/个人文档/Antigravity/arxml/dist/ARXML阅读器',
+   'EXECUTABLE')],)

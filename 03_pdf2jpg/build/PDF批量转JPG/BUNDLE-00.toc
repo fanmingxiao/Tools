@@ -1,0 +1,3 @@
+([('PDF批量转JPG',
+   '/Users/fanmingxiao/个人文档/Antigravity/pdf2jpg/dist/PDF批量转JPG',
+   'EXECUTABLE')],)

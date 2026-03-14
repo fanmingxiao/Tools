@@ -1,0 +1,15 @@
+[project]
+name = "arxml-reader"
+version = "1.0.0"
+description = "AUTOSAR XML阅读器 - 读取ARXML文件并导出为Excel"
+requires-python = ">=3.10"
+dependencies = [
+    "lxml>=5.0.0",
+    "openpyxl>=3.1.0",
+    "customtkinter>=5.2.0",
+    "pyinstaller>=6.0.0",
+    "pillow>=12.1.0",
+]
+
+[project.scripts]
+arxml-reader = "src.main:main"

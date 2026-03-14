@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AUTOSAR xmlns="http://autosar.org/schema/r4.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_4-2-2.xsd">
+  
+  <AR-PACKAGES>
+    <!-- 数据类型包 -->
+    <AR-PACKAGE>
+      <SHORT-NAME>DataTypes</SHORT-NAME>
+      <LONG-NAME>
+        <L-4 L="ZH">数据类型定义</L-4>
+      </LONG-NAME>
+      <DESC>
+        <L-2 L="ZH">包含应用程序使用的所有数据类型定义</L-2>
+      </DESC>
+      
+      <ELEMENTS>
+        <!-- 基础类型 -->
+        <SW-BASE-TYPE>
+          <SHORT-NAME>uint8</SHORT-NAME>
+          <LONG-NAME>
+            <L-4 L="EN">Unsigned 8-bit Integer</L-4>
+          </LONG-NAME>
+          <CATEGORY>FIXED_LENGTH</CATEGORY>
+          <BASE-TYPE-SIZE>8</BASE-TYPE-SIZE>
+          <BASE-TYPE-ENCODING>NONE</BASE-TYPE-ENCODING>
+          <NATIVE-DECLARATION>unsigned char</NATIVE-DECLARATION>
+        </SW-BASE-TYPE>
+        
+        <SW-BASE-TYPE>
+          <SHORT-NAME>uint16</SHORT-NAME>
+          <CATEGORY>FIXED_LENGTH</CATEGORY>
+          <BASE-TYPE-SIZE>16</BASE-TYPE-SIZE>
+          <BASE-TYPE-ENCODING>NONE</BASE-TYPE-ENCODING>
+          <NATIVE-DECLARATION>unsigned short</NATIVE-DECLARATION>
+        </SW-BASE-TYPE>
+        
+        <SW-BASE-TYPE>
+          <SHORT-NAME>float32</SHORT-NAME>
+          <CATEGORY>FIXED_LENGTH</CATEGORY>
+          <BASE-TYPE-SIZE>32</BASE-TYPE-SIZE>
+          <BASE-TYPE-ENCODING>IEEE754</BASE-TYPE-ENCODING>
+          <NATIVE-DECLARATION>float</NATIVE-DECLARATION>
+        </SW-BASE-TYPE>
+        
+        <!-- 实现数据类型 -->
+        <IMPLEMENTATION-DATA-TYPE>
+          <SHORT-NAME>Speed_kph</SHORT-NAME>
+          <LONG-NAME>
+            <L-4 L="ZH">速度（公里/小时）</L-4>
+          </LONG-NAME>
+          <DESC>
+            <L-2 L="ZH">车辆速度数据类型，单位为公里每小时</L-2>
+          </DESC>
+          <CATEGORY>VALUE</CATEGORY>
+        </IMPLEMENTATION-DATA-TYPE>
+        
+        <IMPLEMENTATION-DATA-TYPE>
+          <SHORT-NAME>Temperature_degC</SHORT-NAME>
+          <LONG-NAME>
+            <L-4 L="ZH">温度（摄氏度）</L-4>
+          </LONG-NAME>
+          <CATEGORY>VALUE</CATEGORY>
+        </IMPLEMENTATION-DATA-TYPE>
+        
+        <!-- 单位定义 -->
+        <UNIT>
+          <SHORT-NAME>kph</SHORT-NAME>
+          <LONG-NAME>
+            <L-4 L="EN">Kilometers per hour</L-4>
+          </LONG-NAME>
+          <DISPLAY-NAME>km/h</DISPLAY-NAME>
+        </UNIT>
+        
+        <UNIT>
+          <SHORT-NAME>degC</SHORT-NAME>
+          <DISPLAY-NAME>°C</DISPLAY-NAME>
+        </UNIT>
+        
+        <!-- 计算方法 -->
+        <COMPU-METHOD>
+          <SHORT-NAME>CM_Speed</SHORT-NAME>
+          <CATEGORY>LINEAR</CATEGORY>
+        </COMPU-METHOD>
+      </ELEMENTS>
+    </AR-PACKAGE>
+    
+    <!-- 接口包 -->
+    <AR-PACKAGE>
+      <SHORT-NAME>Interfaces</SHORT-NAME>
+      <DESC>
+        <L-2 L="ZH">软件组件接口定义</L-2>
+      </DESC>
+      
+      <ELEMENTS>
+        <!-- 发送接收接口 -->
+        <SENDER-RECEIVER-INTERFACE>
+          <SHORT-NAME>IF_VehicleSpeed</SHORT-NAME>
+          <LONG-NAME>
+            <L-4 L="ZH">车辆速度接口</L-4>
+          </LONG-NAME>
+          <DESC>
+            <L-2 L="ZH">用于传输车辆速度信息的发送接收接口</L-2>
+          </DESC>
+          <DATA-ELEMENTS>
+            <VARIABLE-DATA-PROTOTYPE>
+              <SHORT-NAME>CurrentSpeed</SHORT-NAME>
+              <TYPE-TREF>/DataTypes/Speed_kph</TYPE-TREF>
+            </VARIABLE-DATA-PROTOTYPE>
+          </DATA-ELEMENTS>
+        </SENDER-RECEIVER-INTERFACE>
+        
+        <SENDER-RECEIVER-INTERFACE>
+          <SHORT-NAME>IF_EngineTemperature</SHORT-NAME>
+          <LONG-NAME>
+            <L-4 L="ZH">发动机温度接口</L-4>
+          </LONG-NAME>
+          <DATA-ELEMENTS>
+            <VARIABLE-DATA-PROTOTYPE>
+              <SHORT-NAME>EngineTemp</SHORT-NAME>
+              <TYPE-TREF>/DataTypes/Temperature_degC</TYPE-TREF>
+            </VARIABLE-DATA-PROTOTYPE>
+          </DATA-ELEMENTS>
+        </SENDER-RECEIVER-INTERFACE>
+        
+        <!-- 客户端服务端接口 -->
+        <CLIENT-SERVER-INTERFACE>
+          <SHORT-NAME>IF_DiagnosticService</SHORT-NAME>
+          <LONG-NAME>
+            <L-4 L="ZH">诊断服务接口</L-4>
+          </LONG-NAME>
+          <DESC>
+            <L-2 L="ZH">提供车辆诊断功能的客户端服务端接口</L-2>
+          </DESC>
+          <OPERATIONS>
+            <CLIENT-SERVER-OPERATION>
+              <SHORT-NAME>ReadDTC</SHORT-NAME>
+              <ARGUMENTS>
+                <ARGUMENT-DATA-PROTOTYPE>
+                  <SHORT-NAME>dtcId</SHORT-NAME>
+                  <DIRECTION>IN</DIRECTION>
+                  <TYPE-TREF>/DataTypes/uint16</TYPE-TREF>
+                </ARGUMENT-DATA-PROTOTYPE>
+                <ARGUMENT-DATA-PROTOTYPE>
+                  <SHORT-NAME>dtcStatus</SHORT-NAME>
+                  <DIRECTION>OUT</DIRECTION>
+                  <TYPE-TREF>/DataTypes/uint8</TYPE-TREF>
+                </ARGUMENT-DATA-PROTOTYPE>
+              </ARGUMENTS>
+            </CLIENT-SERVER-OPERATION>
+            <CLIENT-SERVER-OPERATION>
+              <SHORT-NAME>ClearDTC</SHORT-NAME>
+              <ARGUMENTS>
+                <ARGUMENT-DATA-PROTOTYPE>
+                  <SHORT-NAME>dtcId</SHORT-NAME>
+                  <DIRECTION>IN</DIRECTION>
+                  <TYPE-TREF>/DataTypes/uint16</TYPE-TREF>
+                </ARGUMENT-DATA-PROTOTYPE>
+              </ARGUMENTS>
+            </CLIENT-SERVER-OPERATION>
+          </OPERATIONS>
+        </CLIENT-SERVER-INTERFACE>
+      </ELEMENTS>
+    </AR-PACKAGE>
+    
+    <!-- 软件组件包 -->
+    <AR-PACKAGE>
+      <SHORT-NAME>SwComponents</SHORT-NAME>
+      <DESC>
+        <L-2 L="ZH">软件组件定义</L-2>
+      </DESC>
+      
+      <ELEMENTS>
+        <APPLICATION-SW-COMPONENT-TYPE>
+          <SHORT-NAME>SpeedController</SHORT-NAME>
+          <LONG-NAME>
+            <L-4 L="ZH">速度控制器</L-4>
+          </LONG-NAME>
+          <DESC>
+            <L-2 L="ZH">负责车辆速度控制的应用软件组件</L-2>
+          </DESC>
+          <PORTS>
+            <R-PORT-PROTOTYPE>
+              <SHORT-NAME>RPort_VehicleSpeed</SHORT-NAME>
+              <REQUIRED-INTERFACE-TREF>/Interfaces/IF_VehicleSpeed</REQUIRED-INTERFACE-TREF>
+            </R-PORT-PROTOTYPE>
+            <P-PORT-PROTOTYPE>
+              <SHORT-NAME>PPort_ControlledSpeed</SHORT-NAME>
+              <PROVIDED-INTERFACE-TREF>/Interfaces/IF_VehicleSpeed</PROVIDED-INTERFACE-TREF>
+            </P-PORT-PROTOTYPE>
+          </PORTS>
+        </APPLICATION-SW-COMPONENT-TYPE>
+        
+        <APPLICATION-SW-COMPONENT-TYPE>
+          <SHORT-NAME>EngineMonitor</SHORT-NAME>
+          <LONG-NAME>
+            <L-4 L="ZH">发动机监控</L-4>
+          </LONG-NAME>
+          <DESC>
+            <L-2 L="ZH">监控发动机状态的应用软件组件</L-2>
+          </DESC>
+          <PORTS>
+            <P-PORT-PROTOTYPE>
+              <SHORT-NAME>PPort_EngineTemp</SHORT-NAME>
+              <PROVIDED-INTERFACE-TREF>/Interfaces/IF_EngineTemperature</PROVIDED-INTERFACE-TREF>
+            </P-PORT-PROTOTYPE>
+            <R-PORT-PROTOTYPE>
+              <SHORT-NAME>RPort_DiagService</SHORT-NAME>
+              <REQUIRED-INTERFACE-TREF>/Interfaces/IF_DiagnosticService</REQUIRED-INTERFACE-TREF>
+            </R-PORT-PROTOTYPE>
+          </PORTS>
+        </APPLICATION-SW-COMPONENT-TYPE>
+        
+        <APPLICATION-SW-COMPONENT-TYPE>
+          <SHORT-NAME>DiagnosticHandler</SHORT-NAME>
+          <LONG-NAME>
+            <L-4 L="ZH">诊断处理器</L-4>
+          </LONG-NAME>
+          <PORTS>
+            <P-PORT-PROTOTYPE>
+              <SHORT-NAME>PPort_DiagService</SHORT-NAME>
+              <PROVIDED-INTERFACE-TREF>/Interfaces/IF_DiagnosticService</PROVIDED-INTERFACE-TREF>
+            </P-PORT-PROTOTYPE>
+          </PORTS>
+        </APPLICATION-SW-COMPONENT-TYPE>
+      </ELEMENTS>
+    </AR-PACKAGE>
+    
+  </AR-PACKAGES>
+</AUTOSAR>

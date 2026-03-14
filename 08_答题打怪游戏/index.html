@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>勇者斗恶龙 - 答题打怪</title>
+    <meta name="description" content="一个有趣的第一视角答题打怪小游戏，通过回答选择题来击败怪物！">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 游戏开始界面 -->
+    <div id="start-screen" class="screen active">
+        <div class="title-container">
+            <h1 class="game-title">⚔️ 勇者斗恶龙 ⚔️</h1>
+            <p class="subtitle">答题打怪传奇</p>
+        </div>
+        
+        <div class="menu-container">
+            <div class="csv-upload">
+                <label for="csv-file" class="upload-btn">
+                    📂 导入题库 (CSV)
+                </label>
+                <input type="file" id="csv-file" accept=".csv" hidden>
+                <p id="upload-status" class="upload-status">请先导入题库文件</p>
+            </div>
+            
+            <button id="start-btn" class="menu-btn" disabled>
+                🎮 开始冒险
+            </button>
+            
+            <div class="instructions">
+                <h3>📜 游戏规则</h3>
+                <ul>
+                    <li>每轮挑战 20 道选择题</li>
+                    <li>每题限时 30 秒</li>
+                    <li>正确率达到 60% 以上即可击败怪物</li>
+                    <li>挑战成功后可继续挑战更强大的怪物</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- 游戏主界面 -->
+    <div id="game-screen" class="screen">
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <div class="status-item level">
+                <span class="icon">⚔️</span>
+                <span>关卡 <span id="level-num">1</span></span>
+            </div>
+            <div class="status-item progress">
+                <span class="icon">📊</span>
+                <span>进度 <span id="current-q">1</span>/20</span>
+            </div>
+            <div class="status-item score">
+                <span class="icon">✅</span>
+                <span>正确 <span id="correct-count">0</span></span>
+            </div>
+        </div>
+        
+        <!-- 倒计时条 -->
+        <div class="timer-container">
+            <div class="timer-bar" id="timer-bar"></div>
+            <span class="timer-text" id="timer-text">30</span>
+        </div>
+        
+        <!-- 战斗区域 -->
+        <div class="battle-area" id="battle-area">
+            <div class="monster-container" id="monster-container">
+                <!-- 怪物将由JS动态生成 -->
+                <div class="monster" id="monster">
+                    <div class="monster-body"></div>
+                    <div class="monster-eye left"></div>
+                    <div class="monster-eye right"></div>
+                    <div class="monster-mouth"></div>
+                    <div class="monster-horn left"></div>
+                    <div class="monster-horn right"></div>
+                </div>
+                <div class="monster-hp-bar">
+                    <div class="monster-hp" id="monster-hp"></div>
+                </div>
+                <p class="monster-name" id="monster-name">史莱姆</p>
+            </div>
+        </div>
+        
+        <!-- 题目区域 -->
+        <div class="question-area">
+            <div class="question-box">
+                <p class="question-text" id="question-text">题目内容将显示在这里</p>
+            </div>
+            
+            <div class="options-grid">
+                <button class="option-btn" data-option="A">
+                    <span class="option-label">A</span>
+                    <span class="option-text" id="option-a">选项A</span>
+                </button>
+                <button class="option-btn" data-option="B">
+                    <span class="option-label">B</span>
+                    <span class="option-text" id="option-b">选项B</span>
+                </button>
+                <button class="option-btn" data-option="C">
+                    <span class="option-label">C</span>
+                    <span class="option-text" id="option-c">选项C</span>
+                </button>
+                <button class="option-btn" data-option="D">
+                    <span class="option-label">D</span>
+                    <span class="option-text" id="option-d">选项D</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 游戏结果界面 -->
+    <div id="result-screen" class="screen">
+        <div class="result-container" id="result-container">
+            <!-- 结果内容由JS动态生成 -->
+        </div>
+    </div>
+
+    <script src="js/game.js"></script>
+</body>
+</html>
