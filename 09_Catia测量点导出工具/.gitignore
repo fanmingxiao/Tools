@@ -1,0 +1,26 @@
+# Windows 系统文件
+Thumbs.db
+desktop.ini
+*.tmp
+*.temp
+
+# Office 临时文件
+~$*.xlsx
+~$*.xls
+~$*.docx
+
+# 导出生成的文件（测试时产生）
+测试导出/
+TestExport/
+导出结果/
+Screenshots/
+*.xlsx
+
+# IDE 和编辑器
+.vscode/
+*.suo
+*.user
+
+# 日志文件
+*.log
+.DS_Store

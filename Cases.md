@@ -13,6 +13,7 @@
 | 07 | `07_文件整理工具` | 智能文件整理工具 | 按文件类型（图片、文档、音视频等）和关键字自动对杂乱的文件夹进行分类与整理，生成报告。 | Python (Tkinter) |
 | 08 | `08_答题打怪游戏` | 答题打怪小游戏 | 导入 CSV 题库的网页文字刷题小游戏。答对题目击败怪物闯关。 | 纯前端 (HTML + CSS + JS) |
 | 09 | `09_Catia测量点导出工具` | CATIA 测量点导出工具 | 批量导出 CATIA V5 中选中的测量点坐标、截图，自动生成 Excel 报告。 | Windows系统，需安装 CATIA V5 和 Microsoft Excel。 (VBS) |
+| 10 | `10_SVW-Copilot-Word-Addin` | SVW Copilot Word 插件 | Word 侧边栏插件，在 Ribbon 中添加"AI助手"选项卡，点击打开 SVW Copilot AI 助手网页侧边栏。 | Microsoft Word 2016+ 或 Office 365，支持 Windows/Mac/Word Online。(Office Add-in XML) |
 
 ## 使用说明
 要了解某个具体工具的详细使用步骤和环境搭建，请进入对应的文件夹并查看其中的 `Readme.md`。

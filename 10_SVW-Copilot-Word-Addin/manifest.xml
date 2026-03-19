@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+           xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
+           xsi:type="TaskPaneApp">
+
+  <!-- 基本身份信息 -->
+  <Id>svw-copilot-word-addin-2024</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>SVW</ProviderName>
+  <DefaultLocale>zh-CN</DefaultLocale>
+  <DisplayName DefaultValue="SVW Copilot"/>
+  <Description DefaultValue="SVW AI助手 - 智能办公助手"/>
+
+  <!-- 图标资源 -->
+  <IconUrl DefaultValue="https://copilot.csvw.com/assets/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://copilot.csvw.com/assets/icon-80.png"/>
+
+  <!-- 支持的应用 -->
+  <Hosts>
+    <Host Name="Document"/>
+  </Hosts>
+
+  <!-- 默认设置 -->
+  <DefaultSettings>
+    <SourceLocation DefaultValue="https://copilot.csvw.com/embedded/page/word/src/taskpane/taskpane.html?_host_Info=Word$Win32$16.01$en-US$$$$0"/>
+  </DefaultSettings>
+
+  <!-- 权限 -->
+  <Permissions>ReadWriteDocument</Permissions>
+
+  <!-- 版本覆盖（Ribbon按钮定义） -->
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
+    
+    <!-- 宿主配置 -->
+    <Hosts>
+      <Host xsi:type="Document">
+        
+        <!-- Ribbon 扩展 -->
+        <DesktopFormFactor>
+          
+          <!-- 功能位置 -->
+          <ExtensionPoint xsi:type="PrimaryCommandSurface">
+            
+            <!-- Office 选项卡 -->
+            <OfficeTab id="TabHome">
+              
+              <!-- 在"开始"选项卡中插入组 -->
+              <Group id="SVW.Copilot.Group">
+                <Label resid="SVW.Copilot.Group.Label"/>
+                
+                <!-- 图标 -->
+                <Icon>
+                  <bt:Image size="16" resid="Icon.16x16"/>
+                  <bt:Image size="32" resid="Icon.32x32"/>
+                  <bt:Image size="80" resid="Icon.80x80"/>
+                </Icon>
+                
+                <!-- 控制按钮 -->
+                <Control xsi:type="Button" id="SVW.Copilot.Button">
+                  <Label resid="SVW.Copilot.Button.Label"/>
+                  <Supertip>
+                    <Title resid="SVW.Copilot.Button.Label"/>
+                    <Description resid="SVW.Copilot.Button.Tooltip"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Icon.16x16"/>
+                    <bt:Image size="32" resid="Icon.32x32"/>
+                    <bt:Image size="80" resid="Icon.80x80"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <TaskpaneId>SVWCopilotTaskpane</TaskpaneId>
+                    <SourceLocation resid="Taskpane.Url"/>
+                  </Action>
+                </Control>
+                
+              </Group>
+            </OfficeTab>
+            
+            <!-- 也可以创建自定义选项卡 "AI助手" -->
+            <CustomTab id="TabSVWAIAssistant">
+              <Group id="SVW.AIAssistant.Group">
+                <Label resid="SVW.AIAssistant.Tab.Label"/>
+                <Icon>
+                  <bt:Image size="16" resid="Icon.16x16"/>
+                  <bt:Image size="32" resid="Icon.32x32"/>
+                  <bt:Image size="80" resid="Icon.80x80"/>
+                </Icon>
+                <Control xsi:type="Button" id="SVW.AIAssistant.OpenButton">
+                  <Label resid="SVW.Copilot.Button.Label"/>
+                  <Supertip>
+                    <Title resid="SVW.Copilot.Button.Label"/>
+                    <Description resid="SVW.Copilot.Button.Tooltip"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Icon.16x16"/>
+                    <bt:Image size="32" resid="Icon.32x32"/>
+                    <bt:Image size="80" resid="Icon.80x80"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <TaskpaneId>SVWCopilotTaskpane</TaskpaneId>
+                    <SourceLocation resid="Taskpane.Url"/>
+                  </Action>
+                </Control>
+              </Group>
+              <Label resid="SVW.AIAssistant.Tab.Label"/>
+            </CustomTab>
+            
+          </ExtensionPoint>
+        </DesktopFormFactor>
+        
+      </Host>
+    </Hosts>
+    
+    <!-- 资源定义 -->
+    <Resources>
+      <bt:Images>
+        <bt:Image id="Icon.16x16" DefaultValue="https://copilot.csvw.com/assets/icon-16.png"/>
+        <bt:Image id="Icon.32x32" DefaultValue="https://copilot.csvw.com/assets/icon-32.png"/>
+        <bt:Image id="Icon.80x80" DefaultValue="https://copilot.csvw.com/assets/icon-80.png"/>
+      </bt:Images>
+      <bt:Urls>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://copilot.csvw.com/embedded/page/word/src/taskpane/taskpane.html?_host_Info=Word$Win32$16.01$en-US$$$$0"/>
+      </bt:Urls>
+      <bt:ShortStrings>
+        <bt:String id="SVW.Copilot.Group.Label" DefaultValue="AI助手"/>
+        <bt:String id="SVW.Copilot.Button.Label" DefaultValue="SVW Copilot"/>
+        <bt:String id="SVW.AIAssistant.Tab.Label" DefaultValue="AI助手"/>
+      </bt:ShortStrings>
+      <bt:LongStrings>
+        <bt:String id="SVW.Copilot.Button.Tooltip" DefaultValue="打开 SVW Copilot AI助手侧边栏"/>
+      </bt:LongStrings>
+    </Resources>
+    
+  </VersionOverrides>
+
+</OfficeApp>

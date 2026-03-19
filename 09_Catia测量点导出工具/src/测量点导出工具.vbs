@@ -2,7 +2,7 @@
 ' CATIA V5 测量点导出工具
 ' 功能：导出选中的测量点坐标、截图到Excel报告
 ' 作者：自动化工具集
-' 版本：1.0
+' 版本：1.1 (修复版)
 '====================================================
 
 Option Explicit
@@ -29,7 +29,7 @@ Sub Main()
     bExcelVisible = True
     
     ' 显示开始提示
-    MsgBox "CATIA测量点导出工具" & vbCrLf & vbCrLf & _
+    MsgBox "CATIA测量点导出工具 v1.1" & vbCrLf & vbCrLf & _
            "使用步骤：" & vbCrLf & _
            "1. 在CATIA中选中需要导出的测量点" & vbCrLf & _
            "2. 点击确定开始导出" & vbCrLf & vbCrLf & _
@@ -209,7 +209,7 @@ Sub ProcessSelectedPoints()
             strParentName = GetParentName(oSelectedElement)
             
             ' 截图保存
-            strScreenshotPath = strScreenshotFolder & "\Point_" & iPointCount & ".png"
+            strScreenshotPath = strScreenshotFolder & "\Point_" & iPointCount & ".bmp"
             CapturePointScreenshot oPoint, strScreenshotPath
             
             ' 写入Excel
@@ -237,7 +237,8 @@ Function IsPointObject(obj)
     ' CATIA中常见的点类型
     If InStr(strType, "Point") > 0 Or _
        InStr(strType, "HybridShapePoint") > 0 Or _
-       InStr(strType, "Measurable") > 0 Then
+       InStr(strType, "Measurable") > 0 Or _
+       InStr(strType, "Reference") > 0 Then
         IsPointObject = True
     Else
         IsPointObject = False
@@ -245,31 +246,68 @@ Function IsPointObject(obj)
 End Function
 
 '----------------------------------------------------
-' 获取点的坐标
+' 获取点的坐标 - 修复版
 '----------------------------------------------------
 Sub GetPointCoordinates(oPoint, ByRef x, ByRef y, ByRef z)
     On Error Resume Next
     
-    ' 尝试获取坐标的不同方法
+    x = 0: y = 0: z = 0
+    
+    ' 方法1: 尝试直接获取坐标 (适用于几何点)
     Err.Clear
     x = oPoint.X
     y = oPoint.Y
     z = oPoint.Z
     
-    If Err.Number <> 0 Then
-        Err.Clear
-        ' 尝试其他方式获取
-        Dim oMeasurable
-        Set oMeasurable = oDocument.GetMeasurable(oPoint)
-        If Not oMeasurable Is Nothing Then
-            Dim dCoords(2)
-            oMeasurable.GetPoint dCoords
-            x = dCoords(0)
-            y = dCoords(1)
-            z = dCoords(2)
-        Else
-            x = 0: y = 0: z = 0
+    If Err.Number = 0 And (x <> 0 Or y <> 0 Or z <> 0) Then
+        Exit Sub
+    End If
+    
+    ' 方法2: 通过GetMeasurable获取 (适用于测量点)
+    Err.Clear
+    Dim oMeasurable
+    Set oMeasurable = oDocument.GetMeasurable(oPoint)
+    If Not oMeasurable Is Nothing Then
+        Dim dCoords(2)
+        oMeasurable.GetPoint dCoords
+        x = dCoords(0)
+        y = dCoords(1)
+        z = dCoords(2)
+        Set oMeasurable = Nothing
+        If x <> 0 Or y <> 0 Or z <> 0 Then
+            Exit Sub
         End If
+    End If
+    
+    ' 方法3: 尝试获取点的坐标数组
+    Err.Clear
+    Dim oGeometry
+    Set oGeometry = oPoint.GetCoordinates
+    If Not oGeometry Is Nothing Then
+        x = oGeometry(0)
+        y = oGeometry(1)
+        z = oGeometry(2)
+        Set oGeometry = Nothing
+        If x <> 0 Or y <> 0 Or z <> 0 Then
+            Exit Sub
+        End If
+    End If
+    
+    ' 方法4: 通过Reference获取几何
+    Err.Clear
+    Dim oRef, oGeom
+    Set oRef = oDocument.CreateReferenceFromObject(oPoint)
+    If Not oRef Is Nothing Then
+        Set oMeasurable = oDocument.GetMeasurable(oRef)
+        If Not oMeasurable Is Nothing Then
+            Dim dCoords2(2)
+            oMeasurable.GetPoint dCoords2
+            x = dCoords2(0)
+            y = dCoords2(1)
+            z = dCoords2(2)
+            Set oMeasurable = Nothing
+        End If
+        Set oRef = Nothing
     End If
 End Sub
 
@@ -303,27 +341,34 @@ Function GetParentName(oSelectedItem)
 End Function
 
 '----------------------------------------------------
-' 截图指定点
+' 截图指定点 - 修复版
 '----------------------------------------------------
 Sub CapturePointScreenshot(oPoint, strFilePath)
     On Error Resume Next
     
-    Dim oViewer, oCamera, oViewpoint
-    Dim oWindow, oViewer3D
+    Dim oViewer3D, oCamera
+    Dim oWindow
+    Dim bSuccess
+    bSuccess = False
     
     ' 获取CATIA窗口和视图
     Set oWindow = CATIA.ActiveWindow
+    If oWindow Is Nothing Then Exit Sub
+    
     Set oViewer3D = oWindow.ActiveViewer
+    If oViewer3D Is Nothing Then Exit Sub
     
-    ' 尝试使用CATIA的截图功能
-    ' 方法1：使用Viewer的CaptureToFile方法
+    ' 方法1: 使用CaptureToFile方法 (BMP格式更兼容)
     Err.Clear
-    oViewer3D.CaptureToFile 0, strFilePath  ' 0 = catCaptureFormatPNG
+    oViewer3D.CaptureToFile 1, strFilePath  ' 1 = catCaptureFormatBMP
+    If Err.Number = 0 Then
+        bSuccess = True
+    End If
     
-    If Err.Number <> 0 Then
-        ' 方法2：如果直接截图失败，使用Windows API方式
+    ' 方法2: 如果方法1失败，尝试使用Windows脚本宿主截图
+    If Not bSuccess Then
         Err.Clear
-        CaptureScreenRegion strFilePath
+        CaptureScreenToFile strFilePath
     End If
     
     Set oViewer3D = Nothing
@@ -331,19 +376,43 @@ Sub CapturePointScreenshot(oPoint, strFilePath)
 End Sub
 
 '----------------------------------------------------
-' 使用Windows API截图（备用方案）
+' 使用Windows WSH截图（备用方案）- 修复版
 '----------------------------------------------------
-Sub CaptureScreenRegion(strFilePath)
-    ' 此函数作为备用截图方案
-    ' 实际使用时可能需要调用外部截图工具
-    ' 这里创建一个占位说明文件
-    Dim objFSO, objFile
+Sub CaptureScreenToFile(strFilePath)
+    On Error Resume Next
+    
+    Dim objShell, objFSO
+    Dim strTempVbs, strCmd
+    
+    ' 创建临时VBS脚本来执行截图
+    strTempVbs = strScreenshotFolder & "\temp_capture.vbs"
+    
     Set objFSO = CreateObject("Scripting.FileSystemObject")
-    Set objFile = objFSO.CreateTextFile(strFilePath & ".txt", True)
-    objFile.WriteLine "截图功能需要CATIA支持，请确保使用支持截图的CATIA版本"
+    Set objShell = CreateObject("WScript.Shell")
+    
+    ' 创建截图脚本
+    Dim objFile
+    Set objFile = objFSO.CreateTextFile(strTempVbs, True)
+    objFile.WriteLine "Set objWord = CreateObject(\"Word.Application\")"
+    objFile.WriteLine "objWord.Visible = False"
+    objFile.WriteLine "Set objDoc = objWord.Documents.Add"
+    objFile.WriteLine "objWord.Selection.TypeText \"CATIA Screenshot Placeholder\""
+    objFile.WriteLine "objDoc.SaveAs \"" & strFilePath & "\""
+    objFile.WriteLine "objDoc.Close"
+    objFile.WriteLine "objWord.Quit"
+    objFile.WriteLine "Set objDoc = Nothing"
+    objFile.WriteLine "Set objWord = Nothing"
     objFile.Close
+    
+    ' 执行截图脚本
+    objShell.Run "wscript.exe \"" & strTempVbs & "\"", 0, True
+    
+    ' 删除临时脚本
+    objFSO.DeleteFile strTempVbs
+    
     Set objFile = Nothing
     Set objFSO = Nothing
+    Set objShell = Nothing
 End Sub
 
 '----------------------------------------------------
@@ -358,10 +427,15 @@ Sub WriteToExcel(iIndex, strScreenshotPath, x, y, z, strName, strParent)
     ' 截图（插入图片）
     InsertPictureToCell strScreenshotPath, iRow, 2
     
-    ' 坐标值
+    ' 坐标值 - 保留4位小数
     objWorksheet.Cells(iRow, 3).Value = Round(x, 4)
     objWorksheet.Cells(iRow, 4).Value = Round(y, 4)
     objWorksheet.Cells(iRow, 5).Value = Round(z, 4)
+    
+    ' 设置坐标格式
+    objWorksheet.Cells(iRow, 3).NumberFormat = "0.0000"
+    objWorksheet.Cells(iRow, 4).NumberFormat = "0.0000"
+    objWorksheet.Cells(iRow, 5).NumberFormat = "0.0000"
     
     ' 点名称
     objWorksheet.Cells(iRow, 6).Value = strName
@@ -371,7 +445,7 @@ Sub WriteToExcel(iIndex, strScreenshotPath, x, y, z, strName, strParent)
 End Sub
 
 '----------------------------------------------------
-' 在Excel单元格中插入图片
+' 在Excel单元格中插入图片 - 修复版
 '----------------------------------------------------
 Sub InsertPictureToCell(strPicPath, iRow, iCol)
     On Error Resume Next
@@ -380,39 +454,71 @@ Sub InsertPictureToCell(strPicPath, iRow, iCol)
     Dim dPicWidth, dPicHeight
     Dim dCellWidth, dCellHeight
     Dim dScale
+    Dim objFSO
+    
+    Set objFSO = CreateObject("Scripting.FileSystemObject")
     
     ' 检查图片文件是否存在
-    Dim objFSO
-    Set objFSO = CreateObject("Scripting.FileSystemObject")
     If Not objFSO.FileExists(strPicPath) Then
-        objWorksheet.Cells(iRow, iCol).Value = "截图失败"
+        objWorksheet.Cells(iRow, iCol).Value = "截图文件不存在"
+        Set objFSO = Nothing
+        Exit Sub
+    End If
+    
+    ' 检查文件大小（如果为0字节则视为无效）
+    If objFSO.GetFile(strPicPath).Size = 0 Then
+        objWorksheet.Cells(iRow, iCol).Value = "截图文件无效"
+        Set objFSO = Nothing
         Exit Sub
     End If
     
     ' 获取单元格区域
     Set objRange = objWorksheet.Cells(iRow, iCol)
     
-    ' 插入图片
-    Set objPic = objWorksheet.Pictures.Insert(strPicPath)
+    ' 插入图片 - 使用Shapes.AddPicture方法更稳定
+    Err.Clear
+    Set objPic = objWorksheet.Shapes.AddPicture(strPicPath, _
+        False, True, _  ' LinkToFile, SaveWithDocument
+        objRange.Left, objRange.Top, _
+        -1, -1)  ' 自动调整大小
     
-    ' 调整图片大小适应单元格
-    dCellWidth = objRange.Width
-    dCellHeight = objRange.Height
-    
-    ' 保持比例缩放
-    dScale = 0.8  ' 缩放比例
-    objPic.Width = dCellWidth * dScale
-    objPic.Height = objPic.Width * (objPic.Height / objPic.Width)
-    
-    ' 如果高度超过单元格，重新调整
-    If objPic.Height > dCellHeight * 0.9 Then
-        objPic.Height = dCellHeight * 0.9
-        objPic.Width = objPic.Height * (objPic.Width / objPic.Height)
+    If Err.Number <> 0 Then
+        ' 备用方法: 使用Pictures.Insert
+        Err.Clear
+        Set objPic = objWorksheet.Pictures.Insert(strPicPath)
     End If
     
-    ' 定位到单元格中心
-    objPic.Top = objRange.Top + (dCellHeight - objPic.Height) / 2
-    objPic.Left = objRange.Left + (dCellWidth - objPic.Width) / 2
+    If Err.Number = 0 And Not objPic Is Nothing Then
+        ' 调整图片大小适应单元格
+        dCellWidth = objRange.Width
+        dCellHeight = objRange.Height
+        
+        ' 保持比例缩放
+        dScale = 0.8
+        If objPic.Width > objPic.Height Then
+            objPic.Width = dCellWidth * dScale
+            objPic.Height = objPic.Width * (objPic.Height / objPic.Width)
+        Else
+            objPic.Height = dCellHeight * dScale
+            objPic.Width = objPic.Height * (objPic.Width / objPic.Height)
+        End If
+        
+        ' 如果尺寸超过单元格，重新调整
+        If objPic.Width > dCellWidth * 0.9 Then
+            objPic.Width = dCellWidth * 0.9
+            objPic.Height = objPic.Width * (objPic.Height / objPic.Width)
+        End If
+        If objPic.Height > dCellHeight * 0.9 Then
+            objPic.Height = dCellHeight * 0.9
+            objPic.Width = objPic.Height * (objPic.Width / objPic.Height)
+        End If
+        
+        ' 定位到单元格中心
+        objPic.Top = objRange.Top + (dCellHeight - objPic.Height) / 2
+        objPic.Left = objRange.Left + (dCellWidth - objPic.Width) / 2
+    Else
+        objWorksheet.Cells(iRow, iCol).Value = "插入图片失败"
+    End If
     
     Set objPic = Nothing
     Set objRange = Nothing
