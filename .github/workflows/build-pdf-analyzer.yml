@@ -4,31 +4,34 @@ on:
   push:
     paths:
       - '12_PDF财务分析离线版/**'
-  workflow_dispatch: # 允许用户在仓库 Actions 页面上手动点击运行按钮
+      - '.github/workflows/**'
+  workflow_dispatch:
 
 jobs:
   build-windows:
     name: Build Windows Application
     runs-on: windows-latest
-    defaults:
-      run:
-        working-directory: ./12_PDF财务分析离线版
     
     steps:
+      - name: Configure Git for Long Paths
+        run: git config --system core.longpaths true
+
       - name: Check out Git repository
         uses: actions/checkout@v4
 
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
           cache-dependency-path: './12_PDF财务分析离线版/package-lock.json'
 
       - name: Install Dependencies
+        working-directory: ./12_PDF财务分析离线版
         run: npm install
 
       - name: Build Windows Executable
+        working-directory: ./12_PDF财务分析离线版
         run: npm run build:win
 
       - name: Upload Artifact (EXE)
@@ -40,9 +43,6 @@ jobs:
   build-mac:
     name: Build Mac Application
     runs-on: macos-latest
-    defaults:
-      run:
-        working-directory: ./12_PDF财务分析离线版
     
     steps:
       - name: Check out Git repository
@@ -51,14 +51,16 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
           cache-dependency-path: './12_PDF财务分析离线版/package-lock.json'
 
       - name: Install Dependencies
+        working-directory: ./12_PDF财务分析离线版
         run: npm install
 
       - name: Build macOS App
+        working-directory: ./12_PDF财务分析离线版
         run: npm run build:mac
 
       - name: Upload Artifact (DMG)
