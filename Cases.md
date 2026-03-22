@@ -14,6 +14,6 @@
 | 08 | `08_答题打怪游戏` | 答题打怪小游戏 | 导入 CSV 题库的网页文字刷题小游戏。答对题目击败怪物闯关。 | 纯前端 (HTML + CSS + JS) |
 | 09 | `09_Catia测量点导出工具` | CATIA 测量点导出工具 | 批量导出 CATIA V5 中选中的测量点坐标、截图，自动生成 Excel 报告。 | Windows系统，需安装 CATIA V5 和 Microsoft Excel。 (VBS) |
 | 10 | `10_SVW-Copilot-Word-Addin` | SVW Copilot Word 插件 | Word 侧边栏插件，在 Ribbon 中添加"AI助手"选项卡，点击打开 SVW Copilot AI 助手网页侧边栏。 | Microsoft Word 2016+ 或 Office 365，支持 Windows/Mac/Word Online。(Office Add-in XML) |
-
+| 11 | `11_PDF财务分析在线版` | PDF 财务分析在线版 | 浏览器端纯解析 PDF 财务提取表单内容，提供前端数据可视化核对能力，并自动生成带专业瀑布图表等数据切片的真实可编辑 Word (.docx) 导出报告。 | Vite + React + PDF.js + docx (纯前端应用) |
 ## 使用说明
 要了解某个具体工具的详细使用步骤和环境搭建，请进入对应的文件夹并查看其中的 `Readme.md`。
