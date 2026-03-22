@@ -1,0 +1,13 @@
+directories:
+  output: release
+  buildResources: build
+appId: com.pdfanalyzer.offline
+productName: PDF财务分析离线版
+win:
+  target: nsis
+  icon: public/vite.svg
+mac:
+  target: dmg
+  icon: public/vite.svg
+files: []
+electronVersion: 30.5.1

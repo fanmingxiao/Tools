@@ -1,0 +1,70 @@
+name: Build PDF Analyzer App
+
+on:
+  push:
+    paths:
+      - '12_PDF财务分析离线版/**'
+  workflow_dispatch: # 允许用户在仓库 Actions 页面上手动点击运行按钮
+
+jobs:
+  build-windows:
+    name: Build Windows Application
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: ./12_PDF财务分析离线版
+    
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: './12_PDF财务分析离线版/package-lock.json'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Windows Executable
+        run: npm run build:win
+
+      - name: Upload Artifact (EXE)
+        uses: actions/upload-artifact@v4
+        with:
+          name: PDF-Analyzer-Offline-Windows
+          path: ./12_PDF财务分析离线版/release/*.exe
+
+  build-mac:
+    name: Build Mac Application
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: ./12_PDF财务分析离线版
+    
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: './12_PDF财务分析离线版/package-lock.json'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build macOS App
+        run: npm run build:mac
+
+      - name: Upload Artifact (DMG)
+        uses: actions/upload-artifact@v4
+        with:
+          name: PDF-Analyzer-Offline-Mac
+          path: |
+            ./12_PDF财务分析离线版/release/*.dmg
+            ./12_PDF财务分析离线版/release/*.zip
