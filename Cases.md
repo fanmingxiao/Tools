@@ -15,5 +15,7 @@
 | 09 | `09_Catia测量点导出工具` | CATIA 测量点导出工具 | 批量导出 CATIA V5 中选中的测量点坐标、截图，自动生成 Excel 报告。 | Windows系统，需安装 CATIA V5 和 Microsoft Excel。 (VBS) |
 | 10 | `10_SVW-Copilot-Word-Addin` | SVW Copilot Word 插件 | Word 侧边栏插件，在 Ribbon 中添加"AI助手"选项卡，点击打开 SVW Copilot AI 助手网页侧边栏。 | Microsoft Word 2016+ 或 Office 365，支持 Windows/Mac/Word Online。(Office Add-in XML) |
 | 11 | `11_PDF财务分析在线版` | PDF 财务分析在线版 | 浏览器端纯解析 PDF 财务提取表单内容，提供前端数据可视化核对能力，并自动生成带专业瀑布图表等数据切片的真实可编辑 Word (.docx) 导出报告。 | Vite + React + PDF.js + docx (纯前端应用) |
+| 12 | `12_PDF财务分析离线版` | PDF 财务分析离线版 | 离线的PDF专业财务分析桌面应用，突破前端环境跨域束缚以调用本地硬盘，一键打包生成。 | Electron + Vite + React (.exe桌面端) |
+| 13 | `13_Kindle解码工具` | Kindle电子书脱壳工具 | 基于 Python GUI 的批量转换工具，通过 Kindle 专有序列号计算进行密码摘层，解密并提取受保护数字权益 AZW3/MOBI 内容。 | Python (Tkinter + uv + PyCryptodome) |
 ## 使用说明
 要了解某个具体工具的详细使用步骤和环境搭建，请进入对应的文件夹并查看其中的 `Readme.md`。
